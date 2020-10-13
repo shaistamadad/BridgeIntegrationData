@@ -1,6 +1,4 @@
-datasets = ["pbmc_atac", "pbmc_rna", "adult_brain_ss1",
-            "adult_brain_ss2", "allen_rna", "adult_brain_sci",
-            "human_brain_rna", "human_brain_atac", "pbmc_multiomic"]
+datasets = ["pbmc_3k"]
 
 rule download:
     input: "datasets/{dset}.txt"
