@@ -5,8 +5,8 @@ library(GenomeInfoDb)
 library(ggplot2)
 library(patchwork)
 
-counts <- Read10X_h5("/home/stuartt/data/10x_coassay/pbmc/filtered_feature_bc_matrix.h5")
-fragments <- "/home/stuartt/data/10x_coassay/pbmc/atac_fragments.tsv.gz"
+counts <- Read10X_h5("~/Data/pbmc_unsorted_3k/pbmc_unsorted_3k_filtered_feature_bc_matrix.h5")
+fragments <- "~/Data/pbmc_unsorted_3k/pbmc_unsorted_3k_atac_fragments.tsv.gz"
 
 annotations <- GetGRangesFromEnsDb(EnsDb.Hsapiens.v86)
 seqlevelsStyle(annotations) <- "UCSC"
@@ -23,7 +23,7 @@ peaks <- subsetByOverlaps(x = peaks, ranges = blacklist_hg38_unified, invert = T
 peaks <- peaks[peaks$neg_log10qvalue_summit > 5]
 
 # write peaks to file
-write.table(x = as.data.frame(peaks), file = "data/pbmc_multiomic_peaks.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(x = as.data.frame(peaks), file = "~/Data/pbmc_unsorted_3k/pbmc_multiomic_peaks.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 
 # create object
 pbmc <- CreateSeuratObject(
@@ -73,4 +73,4 @@ pbmc <- SCTransform(pbmc, ncells = 5000)
 pbmc <- RunPCA(pbmc)
 pbmc <- RunUMAP(pbmc, dims = 1:40, reduction.name = "umap.rna")
 
-saveRDS(object = pbmc, file = "objects/pbmc_multiomic.rds")
+saveRDS(object = pbmc, file = "~/Data/pbmc_unsorted_3k/pbmc_unsorted_3k.rds")
