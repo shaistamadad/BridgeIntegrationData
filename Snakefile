@@ -1,4 +1,4 @@
-datasets = ["pbmc_3k"]
+datasets = ["pbmc_3k", "pbmc_10k", "pbmc_humanbrain_3k"]
 
 rule download:
     input: "datasets/{dset}.txt"
@@ -14,3 +14,4 @@ rule process:
     output: "objects/{dset}.rds"
     message: "Process data"
     shell: "Rscript code/dataset_processing/process_{wildcards.dset}.R"
+
