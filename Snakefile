@@ -1,4 +1,4 @@
-datasets = ["pbmc_3k", "pbmc_10k", "pbmc_humanbrain_3k"]
+datasets = ["pbmc_3k", "pbmc_10k", "pbmc_humanbrain_3k", "pbmc_mousebrainE18_5k"]
 
 rule download:
     input: "datasets/{dset}.txt"
