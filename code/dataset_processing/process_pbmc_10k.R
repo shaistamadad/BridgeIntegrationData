@@ -73,4 +73,44 @@ pbmc <- SCTransform(pbmc, ncells = 5000)
 pbmc <- RunPCA(pbmc)
 pbmc <- RunUMAP(pbmc, dims = 1:40, reduction.name = "umap.rna")
 
+## Label Transfer using the new pbmc multimodal citeseq dataset as reference dataset
+
+#remotes::install_github("jlmelville/uwot")
+#remotes::install_github("mojaveazure/seurat-disk")
+#remotes::install_github("satijalab/seurat", ref = "release/4.0.0")
+
+library(Seurat)
+library(SeuratDisk)
+library(ggplot2)
+library(patchwork)
+
+reference <- LoadH5Seurat("/home/madads/Data/pbmc_multimodal.h5seurat")
+
+anchors <- FindTransferAnchors(
+  reference = reference,
+  query = pbmc,
+  query.assay= "SCT",
+  normalization.method = "SCT",
+  reference.reduction = "spca",
+  dims = 1:50
+)
+
+pbmc <- MapQuery(
+  anchorset = anchors,
+  query = pbmc,
+  reference = reference,
+  refdata = list(
+    celltype.l1 = "celltype.l1",
+    celltype.l2 = "celltype.l2",
+    predicted_ADT = "ADT"
+  ),
+  reference.reduction = "spca", 
+  reduction.model = "wnn.umap"
+)
+
+p1 = DimPlot(pbmc, reduction = "ref.umap", group.by = "predicted.celltype.l1", label = TRUE, label.size = 3, repel = TRUE) + NoLegend()
+p2 = DimPlot(pbmc, reduction = "ref.umap", group.by = "predicted.celltype.l2", label = TRUE, label.size = 3 ,repel = TRUE) + NoLegend()
+p1 + p2
+
+
 saveRDS(object = pbmc, file = "~/Data/pbmc_unsorted_10k/pbmc_unsorted_10k.rds")

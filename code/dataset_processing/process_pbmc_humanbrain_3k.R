@@ -73,4 +73,30 @@ pbmc <- SCTransform(pbmc, ncells = 5000)
 pbmc <- RunPCA(pbmc)
 pbmc <- RunUMAP(pbmc, dims = 1:40, reduction.name = "umap.rna")
 
+
+
+### Label Transfer using allen brain scrna-seq as reference 
+
+# Load in the dataset 
+
+allen_brain<-  readRDS("/home/madads/Data/allen_brain.rds")
+
+transfer.anchors <- FindTransferAnchors(
+  reference = allen_brain,
+  query = pbmc, reference.assay = "SCT", query.assay = "SCT",
+  reduction = 'cca'
+)
+
+predicted.labels <- TransferData(
+  anchorset = transfer.anchors,
+  refdata = allen_brain$,
+  weight.reduction = pbmc[['pca']],
+  dims = 1:30
+)
+
+pbmc<- AddMetaData(object = coassay, metadata = predicted.labels)
+
+pbmc[["predicted.id"]]
+
+
 saveRDS(object = pbmc, file = "~/Data/pbmc_humanbrain_3k/pbmc_humanbrain_3k.rds")
